@@ -1,0 +1,22 @@
+Processing ApplicationController#time_now (for 127.0.0.1 at 2009-12-29 19:30:28) [GET]
+  Parameters: {"_dc"=>"1262133027882"}
+Cache miss: default_page_size ({:expires_in=>9000})
+  [4;35;1mAdvSettingDef Columns (1.3ms)[0m   [0mSHOW FIELDS FROM `config`.`adv_setting_defs`[0m
+  [4;36;1mAdvSettingDef Load (0.2ms)[0m   [0;1mSELECT * FROM `config`.`adv_setting_defs` WHERE (`config`.`adv_setting_defs`.`name` = 'MinimumTableSize') LIMIT 1[0m
+  [4;35;1mAdvSetting Load (0.3ms)[0m   [0mSELECT * FROM `config`.`adv_settings` WHERE (`config`.`adv_settings`.`adv_setting_def_id` = 9) LIMIT 1[0m
+  [4;36;1mAdvSetting Columns (1.1ms)[0m   [0;1mSHOW FIELDS FROM `config`.`adv_settings`[0m
+Cache write (will save 100.68ms): default_page_size
+Completed in 104ms (DB: 3) | 200 OK [http://127.0.0.1/webui/application/time_now?_dc=1262133027882]
+  [4;35;1mSQL (0.2ms)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.1ms)[0m   [0;1mSET SQL_AUTO_IS_NULL=0[0m
+  [4;35;1mSetting Load (0.2ms)[0m   [0mSELECT * FROM `netmri`.`Settings` WHERE (Name like 'compliance.%') [0m
+
+
+Processing ApplicationController#time_now (for 127.0.0.1 at 2009-12-29 19:31:27) [GET]
+  Parameters: {"_dc"=>"1262133087882"}
+Cache hit: default_page_size ({:expires_in=>9000})
+Completed in 3ms (DB: 0) | 200 OK [http://127.0.0.1/webui/application/time_now?_dc=1262133087882]
+  [4;36;1mSQL (0.2ms)[0m   [0;1mSET SQL_AUTO_IS_NULL=0[0m
+  [4;35;1mSQL (0.1ms)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSetting Load (0.3ms)[0m   [0;1mSELECT * FROM `netmri`.`Settings` WHERE (Name like 'compliance.%') [0m
+
