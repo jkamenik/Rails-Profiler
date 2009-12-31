@@ -1,3 +1,5 @@
+require 'json'
+
 @actions = {}
 @log_to = nil
 
@@ -139,8 +141,18 @@ def log_process(globals, locals)
   # puts @actions.to_s
   
   if @log_to
-    File.open(@log_to,'w') do |f|
-      f.write @actions.to_s
+    File.open("#{@log_to}.json",'w') do |f|
+      f.write @actions.to_json
+      f.write "\n"
+    end
+    
+    File.open("#{@log_to}.csv",'w') do |f|
+      f.write "Action\tparams\tdate\ttotal time\tsql count\tlongest sql\n"
+      @actions.each do |k,v|
+        v.each do |x|
+          f.write "#{k}\t#{x[:last_params]}\t#{x[:date]}\t#{x[:total_time]}\t#{x[:sql_count]}\t#{x[:longest_time]}\n"
+        end
+      end
     end
   end
 end
@@ -151,7 +163,9 @@ if ARGV.count < 2
   puts "  interval: number of seconds to wake up and attempt to read <read>"
   puts "            0 zero means read once and exit"
   puts "  read:     log file to read benchmark data from"
-  puts "  write:    log file to write json data to"
+  puts "  write:    log file to write data to"
+  puts "            <write>.json will have json data"
+  puts "            <write>.csv will have csv data"
   
   exit 1
 end
