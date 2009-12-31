@@ -25,8 +25,6 @@ def new_globals
 end
 
 def tail(file, interval=1)
-   raise "Illegal interval #{interval}" if interval < 0
-
    File.open(file) do |io|
      #things that need to stay between loops
      globals = new_globals
@@ -38,7 +36,7 @@ def tail(file, interval=1)
      loop do
        puts "loop #{count}"
        if globals[:last_call] && !alreadyLogged
-         # there is something outstanding that to log
+         # there is something outstanding to log
          log_process globals, locals
          alreadyLogged = true
        end
@@ -86,10 +84,17 @@ def tail(file, interval=1)
        end
        
        count += 1
-         
-       # uncomment next to watch what is happening
-       # puts "-"
-       sleep interval
+
+       if interval > 0
+         sleep interval
+       else
+         if globals[:last_call] && !alreadyLogged
+           # there is something outstanding to log
+           log_process globals, locals
+           alreadyLogged = true
+         end
+         break
+       end
      end
    end
 end
@@ -144,6 +149,7 @@ end
 if ARGV.count < 2
   puts "ruby watcher.rb <interval> <read> [<write>]"
   puts "  interval: number of seconds to wake up and attempt to read <read>"
+  puts "            0 zero means read once and exit"
   puts "  read:     log file to read benchmark data from"
   puts "  write:    log file to write json data to"
   
