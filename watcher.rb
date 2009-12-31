@@ -147,10 +147,14 @@ def log_process(globals, locals)
     end
     
     File.open("#{@log_to}.csv",'w') do |f|
-      f.write "Action\tparams\tdate\ttotal time\tsql count\tlongest sql\n"
+      f.write "Action\tparams\tdate\ttotal time (ms)\tsql count\tlongest sql (ms)\n"
       @actions.each do |k,v|
         v.each do |x|
           f.write "#{k}\t#{x[:last_params]}\t#{x[:date]}\t#{x[:total_time]}\t#{x[:sql_count]}\t#{x[:longest_time]}\n"
+          f.write "\tTime (ms)\tSql\n"
+          x[:sql].each do |y|
+            f.write "\t#{y[:time]}\t#{y[:query]}\n"
+          end if x[:sql]
         end
       end
     end
