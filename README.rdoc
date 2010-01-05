@@ -1,0 +1,5 @@
+= Purpose
+To profile SQL by parsing the logs
+
+= Future
+Run the parser live behind a web/push server and graph the results using a javascript charting engine.  And maybe also add more formats to make additional parsing easier
