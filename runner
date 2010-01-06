@@ -1,0 +1,21 @@
+#!/usr/local/bin/ruby
+require 'watcher'
+
+if ARGV.count < 1
+  puts "ruby watcher.rb <read> [<write> <interval>]"
+  puts "  interval: number of seconds to wake up and attempt to read <read>"
+  puts "            0 zero means read once and exit"
+  puts "  read:     log file to read benchmark data from"
+  puts "  write:    log file to write data to"
+  puts "            <write>.json will have json data"
+  puts "            <write>.csv will have csv data"
+  
+  exit 1
+end
+
+watcher = Watcher.new
+watcher.set_file ARGV[1] if ARGV[1]
+
+interval = ARGV[1].to_i || 0
+
+watcher.run(ARGV[0], interval)
