@@ -1,5 +1,20 @@
 = Purpose
 To profile SQL by parsing the logs
 
+= Run
+
+=== Run once:
+  ./runner test/time_now_twice.log test
+This will create test.csv and test.json and exit.
+
+=== Run continuiously:
+  ./runner <path_to_rails>/log/development.log dev 1
+This will create a dev.csv and dev.json and continue to read development.log every 1 second for new data
+
+=== Run as server
+  gem install sanatra
+  ./server
+Go to http://127.0.0.1:4567
+
 = Future
 Run the parser live behind a web/push server and graph the results using a javascript charting engine.  And maybe also add more formats to make additional parsing easier
