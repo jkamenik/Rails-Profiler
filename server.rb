@@ -1,4 +1,5 @@
 #!/usr/local/bin/ruby
+require 'Logger'
 
 if ARGV.size < 1
   puts "./server.rb <development log>"
@@ -6,12 +7,14 @@ if ARGV.size < 1
 end
 
 # must fork before we become a sinatra app
-puts 'test'
 pid = fork
 if pid.nil?
   #child
+  logger = Logger.new('development.log')
+  logger.level = Logger::INFO
+  
   require 'watcher'
-  watch = Watcher.new
+  watch = Watcher.new(logger)
   watch.set_file './public/out'
   watch.run ARGV[0], 1
 else
@@ -19,8 +22,9 @@ else
   
   require 'rubygems'
   require 'sinatra'
+  require 'erb'
 
   get '/' do
-    'This is where things go'
+    erb :index
   end
 end

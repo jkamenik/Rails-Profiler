@@ -1,8 +1,14 @@
 require 'json'
+require 'Logger'
 
 class Watcher
-  def initialize
+  def initialize(logger=nil)
+    @logger = logger || Logger.new(STDOUT)
     @actions = {}
+  end
+  
+  def logger
+    @logger
   end
 
   def set_file(file)
@@ -19,7 +25,7 @@ class Watcher
        count = 0
        alreadyLogged = false
        loop do
-         puts "loop #{count}"
+         logger.debug "loop #{count}"
          if globals[:last_call] && !alreadyLogged
            # there is something outstanding to log
            log_process globals, locals
@@ -109,9 +115,9 @@ private
   end
 
   def log_sql(globals, locals)
-    # puts "SQL: #{globals[:last_sql]}"
-    # puts "Time: #{globals[:last_sql_time]}"
-    # puts "------------------------"
+    logger.debug "SQL: #{globals[:last_sql]}"
+    logger.debug "Time: #{globals[:last_sql_time]}"
+    logger.debug "------------------------"
   
     globals[:sql] = [] if !globals[:sql]
   
@@ -126,15 +132,15 @@ private
   end
 
   def log_process(globals, locals)
-    puts "log_process"
+    logger.debug "log_process"
     log_sql globals, locals if globals[:last_sql]
   
-    # puts "Summary: #{globals[:last_call]}"
-    # puts "Params: #{globals[:last_params]}"
-    # puts "Longest Query: #{globals[:longest_time]} ms"
-    # puts "Total Time: #{globals[:total_time]} ms"
-    # puts "Total SQL calls: #{globals[:sql_count]}"
-    # puts "======================="
+    logger.debug "Summary: #{globals[:last_call]}"
+    logger.debug "Params: #{globals[:last_params]}"
+    logger.debug "Longest Query: #{globals[:longest_time]} ms"
+    logger.debug "Total Time: #{globals[:total_time]} ms"
+    logger.debug "Total SQL calls: #{globals[:sql_count]}"
+    logger.debug "======================="
   
     idx = globals[:last_call]
   
