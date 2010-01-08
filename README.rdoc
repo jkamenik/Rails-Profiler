@@ -13,7 +13,7 @@ This will create a dev.csv and dev.json and continue to read development.log eve
 
 === Run as server
   gem install sanatra
-  ./server
+  ./server <path_to_rails>/log/development.log
 Go to http://127.0.0.1:4567
 
 = Future
