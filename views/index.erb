@@ -24,6 +24,24 @@ $(function () {
     var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
     
     $.plot($("#placeholder"), [ d1, d2, d3 ]);
+    
+    $.getJSON("out.json",function(data){
+      var arr = [];
+      for(x in data){
+        var total = 0;
+        var longest = 0;
+        for(var i=0; i < data[x].length; ++i){
+          total += data[x][i]['total_time'];
+          longest = Math.max(longest,data[x][i]['longest_time']);
+        }
+        if(x.length > 0){
+          var avg = total/x.length;
+        }
+        
+        arr.push(x+": "+longest+": "+avg);
+      }
+      alert( arr.join("\n") );
+    });
 });
 </script>
 </body>
