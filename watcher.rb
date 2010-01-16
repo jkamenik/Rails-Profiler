@@ -44,6 +44,10 @@ class Watcher
              globals[:date] = $1
              locals[:match] = true
            end
+           if line =~ /Completed in ([0-9]+)ms/
+             globals[:complete_time] = $1.to_i
+             locals[:match] = true
+           end
            if line =~ /Parameters: ({.*})/
              globals[:last_params] = $1
              locals[:match] = true
@@ -100,7 +104,8 @@ private
       sql_count: 0,
       longest_time: 0,
       last_sql: nil,
-      last_sql_time: 0
+      last_sql_time: 0,
+      complete_time: 0
     }
   end
 
