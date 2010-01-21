@@ -4,44 +4,22 @@ function log(x){
 
 Profiler = new function(){
   this.processJson = function(id){
-    $.getJSON("out.json",function(data){
-      var avgData = [[0,null]];
-      var maxData = [[0,null]];
-      var longestData = [[0,null]];
-      var ticks = [[0,'']];
-      for(x in data){
-        var total = 0;
-        var longest = 0;
-        var complete = 0;
-        for(var i=0; i < data[x].length; ++i){
-          total += data[x][i]['total_time'];
-          longest = Math.max(longest,data[x][i]['longest_time']);
-          complete = Math.max(complete,data[x][i]['complete_time']);
-        }
-        if(x.length > 0){
-          var avg = total/x.length;
-        }
-
-        log(avgData.length+1);
-        log(avg);
-
-        ticks.push([avgData.length+1,x]);
-        avgData.push([avgData.length+1,avg]);
-        maxData.push([maxData.length+1,complete]);
-        longestData.push([longestData.length+1,longest]);
+    $.getJSON("actions.json",function(data){
+      var maxData = [];
+      var longestData = [];
+      var ticks = [];
+      for(var i = 0; i < data.length; ++i){
+        var x = i + 1;
+        log(data);
+        ticks.push([x,data[i]["action"]+"<br>"+data[i]['date']]);
+        maxData.push([x,data[i]['total_time_ms']]);
+        longestData.push([x,data[i]['longest_sql_ms']]);
       }
-      ticks.push([avgData.length+1,'']);
-      avgData.push([avgData.length+1,null]);
 
       $.plot($(id),[{
         data: maxData,
         label: 'Total Request time',
         bars: {show: true,barWidth: 0.5, align: 'center'}
-      },{
-        data: avgData,
-        label: 'Avg SQL time',
-        yaxis: 2,
-        points: { show: true}
       },{
         data: longestData,
         label: 'Longest SQL time',

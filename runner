@@ -15,6 +15,7 @@ end
 
 watcher = Watcher.new
 watcher.set_file ARGV[1] if ARGV[1]
+watcher.set_db 'profile.db'
 
 interval = ARGV[1].to_i || 0
 

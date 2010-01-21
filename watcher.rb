@@ -1,5 +1,7 @@
 require 'json'
 require 'Logger'
+require 'creator'
+require 'Time'
 
 class Watcher
   def initialize(logger=nil)
@@ -13,6 +15,10 @@ class Watcher
 
   def set_file(file)
     @log_to = file
+  end
+  
+  def set_db(db_file)
+    @db = Creator.create(db_file)
   end
 
   def run(file, interval=1)
@@ -43,6 +49,10 @@ class Watcher
              line =~ /at (\d+-\d+-\d+ \d+:\d+:\d+)/
              globals[:date] = $1
              locals[:match] = true
+             if @db
+               @db.execute("insert into profile (action,date) values (?,strftime('%s',?))",globals[:last_call],globals[:date])
+               globals[:id] = @db.get_first_value("select id from profile where action = ? and datetime(date,'unixepoch') = ?",globals[:last_call],globals[:date])
+             end
            end
            if line =~ /Completed in ([0-9]+)ms/
              globals[:complete_time] = $1.to_i
@@ -134,11 +144,27 @@ private
   
     globals[:last_sql] = nil
     globals[:last_sql_time] = 0
+    
+    if globals[:id]
+      #must be a database to insert to
+      @db.execute("insert into sql (profile,time_ms,query) values (?,?,?)",globals[:id],x[:time],x[:query])
+    end
   end
 
   def log_process(globals, locals)
     logger.debug "log_process"
     log_sql globals, locals if globals[:last_sql]
+    
+    if globals[:id]
+      @db.execute("update profile set parameters = ?, total_time_ms = ?, sql_count = ?, longest_sql_ms = ? where id = ?",
+        globals[:last_params],
+        globals[:total_time],
+        globals[:sql_count],
+        globals[:longest_time],
+        globals[:id]
+      )
+      # @db.commit()
+    end
   
     logger.debug "Summary: #{globals[:last_call]}"
     logger.debug "Params: #{globals[:last_params]}"
