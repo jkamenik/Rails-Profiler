@@ -3,6 +3,13 @@ function log(x){
 }
 
 Profiler = new function(){
+  var tooltip = $.template(""+
+    "${controller} -> ${action}<br>"+
+    "${date}<br>"+
+    "Request time: ${y} ms<br>"+
+    "Longest sql time: ${longest_sql_ms} ms"
+  ).compile();
+  
   this.processJson = function(id){
     $.getJSON("actions.json",function(data){
       var maxData = [];
@@ -11,43 +18,79 @@ Profiler = new function(){
       for(var i = 0; i < data.length; ++i){
         var x = i + 1;
         log(data);
-        ticks.push([x,data[i]["action"]+"<br>"+data[i]['date']]);
-        maxData.push([x,data[i]['total_time_ms']]);
-        longestData.push([x,data[i]['longest_sql_ms']]);
+        ticks.push(data[i]["action"]);
+        longestData.push(data[i]['longest_sql_ms']);
+        data[i]['y'] = data[i]['total_time_ms'];
+        maxData.push(data[i]);
       }
-
-      $.plot($(id),[{
-        data: maxData,
-        label: 'Total Request time',
-        bars: {show: true,barWidth: 0.5, align: 'center'}
-      },{
-        data: longestData,
-        label: 'Longest SQL time',
-        yaxis: 2,
-        points: {show: true}
-      }],{
-        grid: {
-          autoHighlight: true,
-          hoverable: true
+      
+      log(ticks);
+      log(maxData);
+      log(longestData);
+      
+      new Highcharts.Chart({
+        chart: {
+          renderTo: id,
+          margin: [50,0,60,75],
+          defaultSeriesType: 'column'
         },
-        xaxis: {
-          ticks: ticks
+        title: {
+          text: 'Max time per request'
         },
-        yaxis: { tickFormatter: function (v, axis) { return v.toFixed(axis.tickDecimals) +"ms" }},
-        y2axis: { tickFormatter: function (v, axis) { return v.toFixed(axis.tickDecimals) +"ms" }}
-      });
-
-      $(id).bind('plothover',function(event,loc,item){
-        if(item){
-          Profiler.hideToolTip();
-          var point = item.datapoint[1].toFixed(2);
-          Profiler.showToolTip(item.pageX,item.pageY,point+"ms");
-          // mouse over an item
-          log('Item hover');
-          log(loc);
-          log(item);
-        }else{
-          Profiler.hideToolTip();
+        tooltip: {
+          formatter: function(){
+            if(!this.point.controller){
+              return this.point.y+" ms";
+            }
+            return tooltip.apply(this.point); //this.point['controller']+"->"+this.point.action+
+              // "<br>"+this.point.date+
+              // "<br>"+this.point.parameters+
+              // "<br>"+this.point.y+" ms";
+          }
+        },
+        legend: {
+          layout: 'vertical',
+          style: {
+            left: 'auto',
+            bottom: 'auto',
+            right: '10px',
+            top: '10px'
+          },
+          backgroundColor: '#FFFFFF'
+        },
+        xAxis: {
+          categories: ticks,
+          title: { 
+            text: 'Actions',
+            enabled: true
+          },
+          labels: {
+            rotation: -45,
+            align: 'right'
+          }
+        },
+        yAxis: {
+          min: 0,
+          title: {
+            text: 'Time (ms)'
+          }
+        },
+        series: [{
+          type: 'column',
+          name: 'Total Time',
+          data: maxData
+        },{
+          type: 'scatter',
+          name: 'Longest Sql',
+          data: longestData
+        }],
+        plotOptions: {
+          bar: {
+            dataLabels: {
+              enabled: true,
+              color: 'auto'
+            }
+          }
         }
       });
     });
@@ -71,16 +114,35 @@ Profiler = new function(){
   
   // Function for testing the grid
   this.test = function(id){
-    var d1 = [];
-    for (var i = 0; i < 14; i += 0.5)
-        d1.push([i, Math.sin(i)]);
-
-    var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
-
-    // a null signifies separate line segments
-    var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
-
-    $.plot($(id), [ d1, d2, d3 ]);
+    var y = [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6];
+    var x = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    new Highcharts.Chart({
+      chart: {
+        renderTo: id,
+        defaultSeriesType: 'bar'
+      },
+      xAxis: {
+        categories: x,
+        title: {
+          text: 'Month'
+        }
+      },
+      yAxis: {
+        title: {
+          text: 'Temperature (°C)'
+        },
+        plotLines: [{
+          value: 0,
+          width: 1,
+          color: '#808080'
+        }]
+      },
+      series: [{
+        name: 'Tokyo',
+        data: y
+      }]
+    });
   };
   
   return this;
