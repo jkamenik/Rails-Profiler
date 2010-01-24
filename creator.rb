@@ -14,6 +14,7 @@ db.execute("drop table if exists sql")
 sql = <<SQL
 create table profile (
   id INTEGER PRIMARY KEY ASC,
+  controller TEXT,
   action TEXT,
   date INTEGER,
   parameters TEXT,
