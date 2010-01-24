@@ -45,13 +45,15 @@ class Watcher
              log_process globals, locals if globals[:last_call] && !alreadyLogged
              globals = new_globals
              globals[:last_call] = "#{$1} -> #{$2}"
+             globals[:controller] = $1
+             globals[:action] = $2
              # in case there is no time
              line =~ /at (\d+-\d+-\d+ \d+:\d+:\d+)/
              globals[:date] = $1
              locals[:match] = true
              if @db
-               @db.execute("insert into profile (action,date) values (?,strftime('%s',?))",globals[:last_call],globals[:date])
-               globals[:id] = @db.get_first_value("select id from profile where action = ? and datetime(date,'unixepoch') = ?",globals[:last_call],globals[:date])
+               @db.execute("insert into profile (controller,action,date) values (?,?,strftime('%s',?))",globals[:controller],globals[:action],globals[:date])
+               globals[:id] = @db.get_first_value("select id from profile where controller = ? and action = ? and datetime(date,'unixepoch') = ?",globals[:controller],globals[:action],globals[:date])
              end
            end
            if line =~ /Completed in ([0-9]+)ms/
@@ -108,6 +110,8 @@ private
   def new_globals
     return {
       last_call: nil,
+      controller: nil,
+      action: nil,
       last_params: 'None',
       date: nil,
       total_time: 0,

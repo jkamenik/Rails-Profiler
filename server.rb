@@ -38,16 +38,17 @@ else
     content_type options.json_type
     
     rows = []
-    options.db.execute("select id, action, date, datetime(date,'unixepoch'), total_time_ms, sql_count, longest_sql_ms, parameters from profile order by date;") do |row|
+    options.db.execute("select id, controller, action, date, datetime(date,'unixepoch'), total_time_ms, sql_count, longest_sql_ms, parameters from profile order by date;") do |row|
       x = {
         id: row[0],
-        action: row[1],
-        date_number: row[2],
-        date: row[3],
-        total_time_ms: row[4],
-        sql_count: row[5],
-        longest_sql_ms: row[6],
-        parameters: row[7]
+        controller: row[1],
+        action: row[2],
+        date_number: row[3],
+        date: row[4],
+        total_time_ms: row[5],
+        sql_count: row[6],
+        longest_sql_ms: row[7],
+        parameters: row[8]
       }
       rows.push x
     end
