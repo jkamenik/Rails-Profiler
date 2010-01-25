@@ -7,17 +7,12 @@
   
   <!-- Chart javascript -->
   <script src="/Profiler.js"></script>
-  <script src="/Profiler/test.js"></script>
   <script src="/Profiler/ActionTimeline.js"></script>
 </head>
 
 <body>
 <h1>Rails Profiler</h1>
 CSV Profile: <a href="/out.csv">out.csv</a>
-
-<div id="test" style="width:800px;height:400px;">Things go here</div>
-
-<p>
 
 <div id="actionTimeline" style="width:800px;height:400px;"></div>
 
@@ -37,11 +32,7 @@ CSV Profile: <a href="/out.csv">out.csv</a>
 
 <script id="source" language="javascript" type="text/javascript">
 $(function () {
-  Profiler.test('test');
-  
   Profiler.actionTimeline('actionTimeline');
-    
-  //Profiler.processJson('placeholder');
 });
 </script>
 </body>
