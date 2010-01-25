@@ -4,20 +4,44 @@
   <script src="/jquery-1.3.2.min.js"></script>
   <script src="/jquery.template.js"></script>
   <script src="/highcharts.src.js"></script>
-  <script language="javascript" type="text/javascript" src="/main.js"></script>
+  
+  <!-- Chart javascript -->
+  <script src="/Profiler.js"></script>
+  <script src="/Profiler/test.js"></script>
+  <script src="/Profiler/ActionTimeline.js"></script>
 </head>
 
 <body>
 <h1>Rails Profiler</h1>
-CSV Continuing Profile: <a href="/out.csv">out.csv</a>
+CSV Profile: <a href="/out.csv">out.csv</a>
 
-<div id="placeholder" style="width:800px;height:400px;"></div>
+<div id="test" style="width:800px;height:400px;">Things go here</div>
+
+<p>
+
+<div id="actionTimeline" style="width:800px;height:400px;"></div>
+
+<!--
+<p>
+
+<div id="sqlTimeline" style="width:800px;height:400px;"></div>
+
+<p>
+
+<div id="worstActionTimes" style="width:800px;height:400px;"></div>
+
+<p>
+
+<div id="worstSQLTimes" style="width:800px;height:400px;"></div>
+-->
 
 <script id="source" language="javascript" type="text/javascript">
 $(function () {
-  //Profiler.test('placeholder');
+  Profiler.test('test');
+  
+  Profiler.actionTimeline('actionTimeline');
     
-  Profiler.processJson('placeholder');
+  //Profiler.processJson('placeholder');
 });
 </script>
 </body>
