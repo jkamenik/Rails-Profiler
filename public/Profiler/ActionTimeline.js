@@ -1,8 +1,10 @@
 Profiler.actionTimelineTooltip = $.template(""+
+  "<b>${y} ms</b><br>"+
   "${controller} -> ${action}<br>"+
   "${date}<br>"+
-  "Request time: ${y} ms<br>"+
-  "Longest sql time: ${longest_sql_ms} ms"
+  "Action time: ${total_time_ms} ms<br>"+
+  "Longest sql time: ${longest_sql_ms} ms<br>"+
+  "Params: ${parameters}"
 ).compile();
 
 Profiler.actionTimeline = function(id){
@@ -11,13 +13,18 @@ Profiler.actionTimeline = function(id){
     var maxData = [];
     var longestData = [];
     var ticks = [];
+    
     for(var i = 0; i < data.length; ++i){
-      var x = i + 1;
-      self.log(data);
-      ticks.push(data[i]["action"]);
-      longestData.push(data[i]['longest_sql_ms']);
-      data[i]['y'] = data[i]['total_time_ms'];
-      maxData.push(data[i]);
+      var total = data[i];
+      var longest = self.clone(total);
+      
+      ticks.push('&nbsp;'); //cheap trick to remove the label
+      
+      total['y'] = data[i]['total_time_ms'];
+      longest['y'] = data[i]['longest_sql_ms'];
+      
+      maxData.push(total);
+      longestData.push(longest);
     }
     
     self.log(ticks);
@@ -27,8 +34,7 @@ Profiler.actionTimeline = function(id){
     new Highcharts.Chart({
       chart: {
         renderTo: id,
-        margin: [50,0,60,75],
-        defaultSeriesType: 'column'
+        margin: [50,0,60,75]
       },
       title: {
         text: 'Max time per request'
@@ -38,10 +44,7 @@ Profiler.actionTimeline = function(id){
           if(!this.point.controller){
             return this.point.y+" ms";
           }
-          return self.actionTimelineTooltip.apply(this.point); //this.point['controller']+"->"+this.point.action+
-            // "<br>"+this.point.date+
-            // "<br>"+this.point.parameters+
-            // "<br>"+this.point.y+" ms";
+          return self.actionTimelineTooltip.apply(this.point);
         }
       },
       legend: {
@@ -59,24 +62,19 @@ Profiler.actionTimeline = function(id){
         title: { 
           text: 'Actions',
           enabled: true
-        },
-        labels: {
-          rotation: -45,
-          align: 'right'
         }
       },
       yAxis: {
-        min: 0,
         title: {
           text: 'Time (ms)'
         }
       },
       series: [{
-        type: 'column',
+        type: 'area',
         name: 'Total Time',
         data: maxData
       },{
-        type: 'scatter',
+        type: 'area',
         name: 'Longest Sql',
         data: longestData
       }],
