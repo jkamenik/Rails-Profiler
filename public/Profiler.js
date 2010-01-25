@@ -1,7 +1,12 @@
-function log(x){
-  if(console && console.log){ console.log(x); };
-}
+Profiler = new function(){
+  this.log = function(x){
+    if(console && console.log){
+      console.log(x);
+    }
+  };
+};
 
+/*
 Profiler = new function(){
   var tooltip = $.template(""+
     "${controller} -> ${action}<br>"+
@@ -147,3 +152,4 @@ Profiler = new function(){
   
   return this;
 };
+*/
